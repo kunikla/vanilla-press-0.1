@@ -8,5 +8,5 @@ Assignment for JavaScript for WordPress, by Zac Gordon
 I listened to the lectures to understand the desired behavior, but I did the coding.
 
 Release Notes
-* Version 0.0.0 - 07/21/17
+* Version 0.1.0 - 07/21/17
     * Initial upload
