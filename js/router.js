@@ -5,76 +5,47 @@
 
 var vpRouter = {
 
-    /******
-     * Event handler code to make it look like we're
-     * linking to another page
-     *
-     */
-    linkStub: function (e) {
-        let curTitleLinkElem = e.target;
-
-        console.log("Reloading page");
-        curTitleLinkElem.classList.remove("post-title");
-        location.hash = "#" + curTitleLinkElem.classList[0];
-        curTitleLinkElem.classList.add("post-title");
-        window.setTimeout(location.reload(true), 2000);
-
-        // let curTitle = e.target,
-        //     hash = "";
-        //
-        // curTitle.classList.remove("post-title");
-        // hash = "#" + curTitle.classList[0];
-        // curTitle.classList.add("post-title");
-        //
-        // vpView.clrPrimary();
-        // vpView.displayPost(hash);
-    },
-
-    addLinkStubs: function () {
-
-        let listTitles = document.querySelectorAll(".post-title");
-
-        for (curTitle of listTitles) {
-            curTitle.addEventListener("click", vpRouter.linkStub);
-        }
-    },
-
-    linkToListStub: function (e) {
-        vpView.clrPrimary();
-        vpView.displayTitle("Posts");
-        vpView.displayList();
-        vpRouter.addLinkStubs();
-    },
-
     /**
      * extract the slug from the URL stored by the browser
      * @returns {string} slug
      */
     getPostSlugFromURL: function () {
-        return (location.hash.replace("#", ""));
+        return (window.location.hash.replace("#", ""));
     },
 
+    /**
+     *
+     * @param slug {string} the slug used to reference a post
+     * @returns {string} the URL to navigate to the desired post
+     */
     makeURLFromPostSlug: function (slug) {
-        return (location.pathname + "#" + slug);
+        return (window.location.pathname + "#" + slug);
     },
 
     /**
-     * return the name of the "current" post
-     * @returns {Function}
+     * Event handler when user navigates to a new page in the VP app
+     * also called when app first loaded
      */
-    getCurPostName: function () {
-        return(vpModel.getCurSlug());
-    },
+    goToNewPage: function (e) {
 
-    /**
-     * Given the slug of a post, create the URL that will navigate to that post
-     * @param slug  {string} slug of post whose URL is desired
-     */
-    getPostLinkFromSlug: function (slug) {
+        let slug = vpRouter.getPostSlugFromURL();
 
+        vpView.clrPrimary();
+
+        if ("" == slug) {
+            vpView.displayList();
+        } else {
+            if (vpModel.getPostBySlug(slug)) {
+                vpView.displayCurPost();
+            } else {
+                vpView.display404 (slug);
+            }
+        }
     },
 
     init: function () {
+
+        window.addEventListener ('hashchange', vpRouter.goToNewPage);
 
     },
 

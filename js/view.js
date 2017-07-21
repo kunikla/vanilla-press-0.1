@@ -46,6 +46,7 @@ var vpView = {
     },
 
     displayCurPost: function () {
+        vpView.clrPrimary();
         vpView.displayTitle(vpModel.getCurTitle());
         vpView.displayContent(vpModel.getCurContent());
     },
@@ -59,6 +60,9 @@ var vpView = {
 
         vpModel.fetchPosts();
         vpModel.resetIterator();
+        vpView.clrPrimary();
+
+        vpView.displayTitle("Posts");
 
         while (vpModel.getNextPost() ) {
 
@@ -81,9 +85,6 @@ var vpView = {
             contentElem.appendChild(divElem);
         }
 
-        // Make page links navigate to pages in database
-        vpRouter.addLinkStubs();
-
     },
 
     /**
@@ -104,12 +105,8 @@ var vpView = {
      */
     init: function() {
 
-        vpView.clrPrimary();
-
-        // Make site header navigate to "home" page (list of posts)
-        document.querySelector("header").addEventListener("click", vpRouter.linkToListStub);
-
-        // TODO if database empty or does not exist, display button in header to load initial data
+        document.querySelector('#db-init').addEventListener('click', vpModel.initDB);
+        document.querySelector('#db-clr').addEventListener('click', vpModel.clrDB);
 
     }
 };

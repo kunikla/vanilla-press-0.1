@@ -9,7 +9,7 @@
 
 let vpModel = {
 
-    allPosts: JSON.parse(localStorage.getItem('vp_database')),
+    allPosts: {},
     curPost: {
         date: helpers.timeStamp(),
         modified: helpers.timeStamp(),
@@ -27,7 +27,10 @@ let vpModel = {
      * sorts the posts in allPosts by their ID's
      */
     sortPosts: function () {
-        vpModel.allPosts.sort((x,y)=>((x.id < y.id) ? 1 : -1));
+
+        if (vpModel.allPosts.length > 0) {
+            vpModel.allPosts.sort((x, y) => ((x.id < y.id) ? 1 : -1));
+        }
     },
 
     /**
@@ -36,8 +39,10 @@ let vpModel = {
      */
     fetchPosts: function () {
 
-        vpModel.allPosts = JSON.parse(localStorage.getItem('vp_database'));
-
+        vpModel.allPosts = JSON.parse(window.localStorage.getItem('vp_database'));
+        if (null == vpModel.allPosts) {
+            vpModel.allPosts = [];
+        }
 
     },
 
@@ -46,11 +51,20 @@ let vpModel = {
      *
      */
     storePosts: function () {
-        localStorage.setItem('vp_database', JSON.stringify(vpModel.allPosts));
+        window.localStorage.setItem('vp_database', JSON.stringify(vpModel.allPosts));
     },
 
-    // TODO method to check for existence of "database", empty "database"
-    // TODO event handler: if user clicks on button, initialize "database" and hide button
+    initDB: function () {
+        vpModel.allPosts = posts;
+        vpModel.storePosts();
+        vpRouter.goToNewPage();
+    },
+
+    clrDB: function () {
+        vpModel.allPosts = [];
+        vpModel.storePosts();
+        vpRouter.goToNewPage();
+    },
 
     /**
      * Copy a single post into the current post
@@ -252,8 +266,14 @@ let vpModel = {
 
         vpModel.fetchPosts();
         vpModel.sortPosts();
-        vpModel.maxID = vpModel.allPosts[vpModel.allPosts.length-1].id;
-        vpModel.curPostID = vpModel.allPosts[0].id;
+        if (0 == vpModel.allPosts.length) {
+            vpModel.maxID = 0;
+            vpModel.curPostID = 0;
+        } else {
+            vpModel.maxID = vpModel.allPosts[vpModel.allPosts.length-1].id;
+            vpModel.curPostID = vpModel.allPosts[0].id;
+        }
+
         // vpModel.initCurPost();
     },
 
